@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.4-1.40.13 (TeX Live 2012) (format=pdflatex 2012.6.30)  31 MAY 2014 15:55
+This is pdfTeX, Version 3.1415926-2.4-1.40.13 (TeX Live 2012) (format=pdflatex 2012.6.30)  31 MAY 2014 17:40
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -521,63 +521,69 @@ l.16 \listoffigures
 
  [2
 
+] (./latex.lot)
+\tf@lot=\write6
+\openout6 = `latex.lot'.
+
+ [3
+
 ]
 Cap\'{\i }tulo 1.
-[3
+[4
 
 ]
 Cap\'{\i }tulo 2.
-<sintaxe.jpg, id=80, 260.975pt x 545.03625pt>
+<sintaxe.jpg, id=88, 260.975pt x 545.03625pt>
 File: sintaxe.jpg Graphic file (type jpg)
  <use sintaxe.jpg>
-Package pdftex.def Info: sintaxe.jpg used on input line 23.
+Package pdftex.def Info: sintaxe.jpg used on input line 24.
 (pdftex.def)             Requested size: 260.97437pt x 545.03493pt.
- [4
+ [5
 
-] [5 <./sintaxe.jpg>]
+] [6 <./sintaxe.jpg>]
 Cap\'{\i }tulo 3.
-[6
+[7
 
 ]
-LaTeX Font Info:    Try loading font information for OMS+cmr on input line 55.
+LaTeX Font Info:    Try loading font information for OMS+cmr on input line 56.
  (/usr/local/texlive/2012/texmf-dist/tex/latex/base/omscmr.fd
 File: omscmr.fd 1999/05/25 v2.5h Standard LaTeX font definitions
 )
 LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <12> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 55.
- [7] [8]
-[9]
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 56.
+ [8] [9]
+[10]
 Cap\'{\i }tulo 4.
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 95.
-[10
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 106.
+[11
 
 ]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 95.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 106.
  (./latex.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 95.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 95.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 106.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 106.
 Package rerunfilecheck Info: File `latex.out' has not changed.
 (rerunfilecheck)             Checksum: 763E9A6F9BEE2582382C17194355006A;514.
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 95.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 106.
  ) 
 Here is how much of TeX's memory you used:
- 5709 strings out of 493488
- 82583 string characters out of 3141326
+ 5715 strings out of 493488
+ 82633 string characters out of 3141326
  168264 words of memory out of 3000000
  8937 multiletter control sequences out of 15000+200000
  9635 words of font info for 34 fonts, out of 3000000 for 9000
  957 hyphenation exceptions out of 8191
- 29i,6n,28p,890b,493s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 29i,7n,28p,890b,493s stack positions out of 5000i,500n,10000p,200000b,50000s
 </usr/local/texlive/2012/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb
 ></usr/local/texlive/2012/texmf-dist/fonts/type1/public/amsfonts/cm/cmbxti10.pf
 b></usr/local/texlive/2012/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb>
 </usr/local/texlive/2012/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></
 usr/local/texlive/2012/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></u
 sr/local/texlive/2012/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt12.pfb>
-Output written on latex.pdf (13 pages, 106392 bytes).
+Output written on latex.pdf (14 pages, 106872 bytes).
 PDF statistics:
- 142 PDF objects out of 1000 (max. 8388607)
- 118 compressed objects within 2 object streams
- 24 named destinations out of 1000 (max. 500000)
+ 150 PDF objects out of 1000 (max. 8388607)
+ 125 compressed objects within 2 object streams
+ 27 named destinations out of 1000 (max. 500000)
  78 words of extra memory for PDF output out of 10000 (max. 10000000)
 

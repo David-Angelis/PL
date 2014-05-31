@@ -48,6 +48,7 @@ Figure figure;
 Graphic graphic;
 Table table;
 LTrow ltrow;
+Trow trow;
 }
 
 %token BREPORT EREPORT BFM EFM BTITLE ETITLE BSUBTITLE ESUBTITLE BAUTHOR EAUTHOR BNAME ENAME BFOOT EFOOT
@@ -55,14 +56,14 @@ LTrow ltrow;
 %token BABS EABS TOC LOF LOT BBODY EBODY BCHAP ECHAP BSEC ESEC BSUBSEC ESUBSEC BSUBSUBSECTION ESUBSUBSECTION
 %token BLIST ELIST BCODE ECODE BSUM ESUM BPARA EPARA BREF EREF BXREF EXREF BCIT ECIT BITERM EITERM BBLOD EBOLD
 %token BITALIC EITALIC BUNDERLINE EUNDERLINE BINLINE EINLINE BACRONYM EACRONYM BFIG EFIG BGRAPH EGRAPH BCAPTION ECAPTION
-%token BTABLE ETABLE BBACK EBACK TEXTO  TARGET INT Caminho texto BDESC EDESC BITEM EITEM BNUM ENUM BBM EBM BKEYS EKEYS
+%token BTABLE ETABLE BBACK EBACK TEXTO  TARGET INT Caminho texto BDESC EDESC BITEM EITEM BNUM ENUM BBM EBM BKEYS EKEYS BCELL ECELL BROW EROW
 %type <report> Report
 %type <front>FrontMatter
 %type <lauthor>  Authors
 %type <author> Author
 %type <str> Institution TEXTO Title SubTitle Name Nident Email Url Affiliation Date Footnote Caminho Ref Xref Citref Iterm TOC LOT LOF Toc Lot Lof TARGET Format Caption texto
 %type <words> Keys LKeys
-%type <str> Keywords Trow
+%type <str> Keywords
 %type <conteudo> FreeElement
 %type <lparagraph> ParaList Abstract BackMatter
 %type <lparagraph1>Aknowledgements
@@ -98,6 +99,7 @@ LTrow ltrow;
 %type <graphic>Graphic
 %type <table>Table
 %type <ltrow>TrowList
+%type <trow>TRow Row
 %start Final
 %%
 
@@ -337,12 +339,14 @@ Caption	: BCAPTION TEXTO ECAPTION {$$=$2;}
 
 Table : BTABLE Caption TrowList ETABLE {$$=consTable($2,$3);}
 ;
-TrowList :TrowList Trow {$$=consTrowList($1,$2);}
-| Trow {$$=consTrowList(NULL,$1);}
+TrowList :TrowList Row {$$=consTrowList($1,$2);}
+| Row {$$=consTrowList(NULL,$1);}
 ;
-Trow : TEXTO {$$=$1;}
+Row :BROW TRow EROW {$$=$2;}
 ;
-
+TRow: BCELL TEXTO ECELL {$$=consTRowList(NULL,$2);}
+| TRow BCELL TEXTO ECELL {$$=consTRowList($1,$3);}
+;
 %%
 
 int main(int argc ,char *argv[])

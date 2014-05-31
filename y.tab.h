@@ -134,7 +134,11 @@
      BBM = 350,
      EBM = 351,
      BKEYS = 352,
-     EKEYS = 353
+     EKEYS = 353,
+     BCELL = 354,
+     ECELL = 355,
+     BROW = 356,
+     EROW = 357
    };
 #endif
 /* Tokens.  */
@@ -234,6 +238,10 @@
 #define EBM 351
 #define BKEYS 352
 #define EKEYS 353
+#define BCELL 354
+#define ECELL 355
+#define BROW 356
+#define EROW 357
 
 
 
@@ -282,9 +290,10 @@ Figure figure;
 Graphic graphic;
 Table table;
 LTrow ltrow;
+Trow trow;
 }
 /* Line 1529 of yacc.c.  */
-#line 288 "y.tab.h"
+#line 297 "y.tab.h"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

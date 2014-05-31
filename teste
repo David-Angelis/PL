@@ -92,7 +92,7 @@ As seguintes estruturas seguem extatamente a mesma arquitetura e não serão apr
 \BITEM Section /EITEM
 \BITEM SubSection  /EITEM
 \BITEM SubSubSection  /EITEM
-/ELIST/ECHAP /EBODY\BBM\BPARA 
-Este trabalho prático permitiu-nos consolidar os conhecimentos obtidos nas aulas uma vez que precisamos de tudo o que temos vindo a dar, a forma como estruturar o compilador, como funcionava a gramática disponibilizada pelo docente, o que era suposto os analisadores lexico e semantico fazerem, como funcionavam e interagiam. O nível de dificuldade neste trabalho foi um pouco maior que no primeiro, o que era de esperar, e foi facilitado pelo facto de termos já grande parte da gramática, apenas tendo de fazer algumas alterações. A nossa satisfação perante o que foi produzido neste trabalho é positiva, uma vez que ficamos a perceber melhor a estruturação do compilador dividindo o analisador em analisador lexico e sintatico, colocando depois um programa em C a fazer a gestão dos dados e escrever nos ficheiros HTML e LaTeX nas respetivas linguagens. 
- 
-/EPARA/EBM/REPORT
+/ELIST
+
+\BTABLE \BCAPTION Test /ECAPTION  \BROW \BCELL dfsdf dsfsdfd /ECELL  \BCELL fddsfs /ECELL /EROW \BROW \BCELL dfsdf dsfsdfd /ECELL /EROW \BROW \BCELL fddsfs /ECELL /EROW/ETABLE/ECHAP /EBODY\BBM\BPARA 
+Este trabalho prático permitiu-nos consolidar os conhecimentos obtidos nas aulas uma vez que precisamos de tudo o que temos vindo a dar, a forma como estruturar o compilador, como funcionava a gramática disponibilizada pelo docente, o que era suposto os analisadores lexico e semantico fazerem, como funcionavam e interagiam. O nível de dificuldade neste trabalho foi um pouco maior que no primeiro, o que era de esperar, e foi facilitado pelo facto de termos já grande parte da gramática, apenas tendo de fazer algumas alterações. A nossa satisfação perante o que foi produzido neste trabalho é positiva, uma vez que ficamos a perceber melhor a estruturação do compilador dividindo o analisador em analisador lexico e sintatico, colocando depois um programa em C a fazer a gestão dos dados e escrever nos ficheiros HTML e LaTeX nas respetivas linguagens. /EPARA/EBM/REPORT

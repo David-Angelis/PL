@@ -433,7 +433,6 @@ ChapterConteudo consChapterFloat(Float a){
     aux=(ChapterConteudo)malloc(sizeof(ChapterConteudoNodo));
     aux->tipo=FLOAT;
     aux->ChapConteudo.foat=a;
-    printf("%d\n", aux->ChapConteudo.foat->tipo);
     return aux;
 }
 
@@ -539,7 +538,6 @@ SectionConteudo consSectionFloat(Float a){
     aux=(SectionConteudo)malloc(sizeof(SectionNode));
     aux->tipo=FLOAT;
     aux->SConteudo.foat=a;
-    printf("%s\n", a->Conteudo.figure->text);
     return aux;
 }
 SectionConteudo consSectionItem(ItemList a){
@@ -776,14 +774,12 @@ Figure consFigure(Graphic a,char *caption){
     aux=(Figure)malloc(sizeof(SFigure));
     aux->graphic=a;
     aux->text=strdup(caption);
-    printf("%s\n",aux->graphic->caminho);
     return aux;
 }
 Float consFloatFigure(Figure a){
     Float aux=(Float)malloc(sizeof(SFloat));
     aux->tipo=FLOAT;
     aux->Conteudo.figure=a;
-     printf("%s\n",aux->Conteudo.figure->text);
     return aux;
 }
 
@@ -794,10 +790,10 @@ Float consFloatTable(Table a){
     return aux;
 }
                             
-LTrow consTrowList(LTrow l,char *text){
+LTrow consTrowList(LTrow l,Trow a){
     LTrow aux;
     aux=(LTrow)malloc(sizeof(TrowNodo));
-    aux->text=strdup(text);
+    aux->trow=a;
     aux->seg=l;
     return aux;
 
@@ -814,6 +810,27 @@ LTrow  reverseLTrow (LTrow  head)
         head = next;
     }
     return cursor;
+}
+Trow  reverseTrow (Trow  head)
+{
+    Trow  cursor = NULL;
+    Trow  next;
+    while (head)
+    {
+        next = head->seg;
+        head->seg= cursor;
+        cursor = head;
+        head = next;
+    }
+    return cursor;
+}
+
+Trow consTRowList(Trow l,char * text){
+    Trow aux;
+    aux=(Trow)malloc(sizeof(STrow));
+    aux->text=text;
+    aux->seg=l;
+    return reverseTrow(aux);
 }
 
 Table consTable(char *caption,LTrow trow){
@@ -1137,9 +1154,9 @@ void printParagraphConteudo(ListaConteudo e,FILE * report,FILE * latex){
         }
 }
 void printFloat(Float a,FILE *report,FILE *latex ){
-    printf("OK\n");
+    
     if(a->tipo==FLOAT){
-        printf("OK1\n");
+        
         fprintf(report, "<div style=\"text-align:center;\">");
         fprintf(report,"<figure><img src=\"%s\"><figcaption><a name=\"%s\">%s</a></figcaption></figure>",a->Conteudo.figure->graphic->caminho,a->Conteudo.figure->text,a->Conteudo.figure->text);
         fprintf(report, "</div>");
@@ -1147,29 +1164,43 @@ void printFloat(Float a,FILE *report,FILE *latex ){
         
     }
     if(a->tipo==TABLE){
-        printf("OK2\n");
+        
         int i=0,j=0;
         fprintf(report,"<table border=2 class=\"selectorsReview\" style=\"margin-left:auto; margin-right:auto; padding-top:25px;padding-bottom:25px;\">");
-        fprintf(report,"<tr>");
-        for(LTrow trow=a->Conteudo.table->trow;trow!=NULL;trow=trow->seg){
+         for(LTrow ltrow=a->Conteudo.table->trow;ltrow!=NULL;ltrow=ltrow->seg){
+             fprintf(report,"<tr>");
+             for(Trow trow=ltrow->trow;trow!=NULL;trow=trow->seg){
             i++;
             fprintf(report,"<td>%s</td>",trow->text);
         }
         fprintf(report,"</tr>");
+        }
         fprintf(report,"<caption><a name=\"%s\">%s</a></caption>",a->Conteudo.table->caption,a->Conteudo.table->caption);
         fprintf(report,"</table>");
-        fprintf(latex,"\\begin{center}\begin{tabular}{");
+        fprintf(latex,"\\begin{table}");
+        fprintf(latex,"\\begin{center}\\begin{tabular}{");
         while(j<i){
             fprintf(latex,"| l");
             j++;
         }
-        fprintf(latex,"|}");
-        fprintf(latex,"\\hline");
-        for(LTrow trow=a->Conteudo.table->trow;trow!=NULL;trow=trow->seg){
-            fprintf(latex,"%s \\ \\hline",trow->text);
+        fprintf(latex,"|}\n");
+                 fprintf(latex,"\\hline\n");
+        for(LTrow ltrow=a->Conteudo.table->trow;ltrow!=NULL;ltrow=ltrow->seg){
+          for(Trow trow=ltrow->trow;trow!=NULL;trow=trow->seg){
+              if(trow->seg==NULL){
+                  fprintf(latex,"%s \n",trow->text);
+                  break;
+              }
+            fprintf(latex,"%s & \n",trow->text);
+          }
+             fprintf(latex,"\\\\");
+            fprintf(latex,"\\hline\n");
         }
-        fprintf(latex,"\\end{tabular}");
-        fprintf(latex,"\\end{center}");
+        fprintf(latex,"\\end{tabular}\n");
+        fprintf(latex,"\\end{center}\n");
+        fprintf(latex,"\\caption{%s}",a->Conteudo.table->caption);
+        fprintf(latex,"\\end{table}");
+        
     }
 }
 
@@ -1293,11 +1324,9 @@ void showReport( Report reports )
         fprintf(latex,"\\tableofcontents\n");
     fprintf(report,"<h2>Table of Contents</h2>");
     for(ListChapter lc=reports->listchapter;lc!=NULL;lc=lc->seg){
-        printf("Entrou\n");
         fprintf(report,"<li><p><a href=\"#%s\">%d %s<a/></p></li>\n",lc->capitulo->title,i,lc->capitulo->title);
             for(LChapter chap=lc->capitulo->capitulo;chap!=NULL;chap=chap->seg){
                 if(chap->conteudo->tipo==SECTION){
-                    printf("Entrou1\n");
                     fprintf(report,"<li><a href=\"#%s\">%d.%d %s<a/></li>\n",chap->conteudo->ChapConteudo.section->titulo,i,j,chap->conteudo->ChapConteudo.section->titulo);
                     j++;
                 }
@@ -1311,7 +1340,6 @@ void showReport( Report reports )
         fprintf(latex,"\\listoffigures\n");
         fprintf(report,"<h2>List of Figure</h2>");
         for(ListChapter lc=reports->listchapter;lc!=NULL;lc=lc->seg){
-             printf("EntrouFLoat\n");
             for(LChapter chap=lc->capitulo->capitulo;chap!=NULL;chap=chap->seg){
                 if(chap->conteudo->tipo==FLOAT){
                     if(chap->conteudo->ChapConteudo.foat->tipo==FLOAT)
@@ -1358,6 +1386,7 @@ void showReport( Report reports )
         }
     }
     if(e->lot!=NULL){
+        fprintf(latex,"\\listoftables\n");
         fprintf(report,"<h2>List of Table</h2>");
         for(ListChapter lc=reports->listchapter;lc!=NULL;lc=lc->seg){
             for(LChapter chap=lc->capitulo->capitulo;chap!=NULL;chap=chap->seg){
@@ -1518,7 +1547,7 @@ void showReport( Report reports )
         }
     }
     
-    fprintf(report,"<h2>Epilogue</h2>");
+    fprintf(report,"<h2>Conclusão</h2>");
     fprintf(latex,"\\chapter{Conclusão}\n");
     printParagraph(reports->final,report,latex);
     fprintf(latex,"\\end{document}");

@@ -89,12 +89,17 @@ typedef struct  SLParagraph{
 }*ListaParagraph,ParagraphNode;
 
 
+typedef struct sTrow{
+    char *text;
+    struct sTrow *seg;
+}*Trow,STrow;
 
 typedef struct sLTrow{
-    char* text;
+    Trow trow;
     struct sLTrow *seg;
     
 }*LTrow,TrowNodo;
+
 
 typedef struct  sTable{
     char *caption;
@@ -344,7 +349,8 @@ typedef struct sReport{
 
 Report consReport(Front a, ListChapter b,ListaParagraph g);
 Table consTable(char *caption,LTrow trow);
-LTrow consTrowList(LTrow l,char *text);
+LTrow consTrowList(LTrow l,Trow a);
+Trow consTRowList(Trow l,char * text);
 Float consFloatFigure(Figure a);
 Float consFloatTable(Table a);
 Figure consFigure(Graphic a,char *caption);
