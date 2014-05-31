@@ -1,0 +1,98 @@
+\REPORT\BFM\TITLE PL - Processamento de Linguagens /TITLE \SUBTITLE \\Report 2007: vamos escrever relatórios /SUBTITLE\AUTHOR \NAME David Angelis /NAME \NIDENT 60990 /NIDENT /AUTHOR\AUTHOR \NAME Lucas Oliveira /NAME \NIDENT 60990 /NIDENT /AUTHOR\AUTHOR \NAME Rui Mendes /NAME \NIDENT 60990 /NIDENT /AUTHOR\DATE 14 Maio 2014 /DATE\INST Uminho /INST \BKEYS \KEY Flex /KEY  \KEY Yacc /KEY /EKEYS \BABS \BPARA Neste trabalho temos como objetivo criar um analisador léxico e um sintático, que processa e analisa o texto,apanhando as palavras reservadas, e de seguida verifica se a estrutura do relatório está bem construida. Enquando analisa o texto vai guardando-o em estruturas de dados, em listas ligadas.E por fim convertendo o nosso relatório em HTML e em LaTex. /EPARA /EABS\TOC\LOF\LOT/EFM\BBODY\BCHAP \TITLE Introdução /TITLE\BPARAPara o segundo Trabalho Prático da Unidade Curricular de Processamento de Linguagens, a nossa escolha foi o enunciado 5 que tem como titulo: Report 2007: vamos escrever relatórios. Neste projeto, pretende-se que seja criado um compilador capaz de "converter" uma relatório escrito numa linguagem criada por nó. Portanto, neste documento irão estar presentes as nossas decisões, a estruturação do projecto, bem como as explicações e funcionamento do mesmo./EPARA/ECHAP\BCHAP \TITLE Sintaxe da Nossa Linguagem /TITLE \BPARAA seguinte figura mostra as diferentes palavras reservadas que o analisador léxico deverá reconhecer e comunica-lá ao analisador sintático.   /EPARA\BFIG \BGRAPH sintaxe.jpg/EGRAPH \BCAPTION Sintaxe da nossa Linguagem /ECAPTION /EFIG/ECHAP\BCHAP \TITLE Estrutura do Trabalho /TITLE\BPARAEste trabalho consiste em dois analisadores, um lexico, feito em flex que irá "apanhar" as palavras reservadas na nossa linguaguem e passar a informação do que reconheceu para o analisador sintático, feito em yacc, que irá verificar se a gramática obtida do documento que está a ser analisado está correta.Depois disto, e no yacc, gravamos os dados em estruturas de dados. Por fim, vamos buscar os dados a essas estruturas e criamos um ficheiro HTML e/ou LaTeX com a nossa linguagem convertida para essas linguagens./EPARA\BSEC \TITLE Report /TITLE\CODE typedef struct sReport{
+Front front;
+ListChapter listchapter;
+ListaParagraph final;
+}*Report,SReport; /CODE
+\BPARA
+Essa estrutura permite-nos representar o relatório que será composto por 3 partes, o FrontMatter, o Body e por ultimo o BackMatter.   
+/EPARA/ESEC
+\BSEC \TITLE FrontMatter /TITLE
+\CODE
+typedef struct sFrontMatter
+{
+    
+char *title;
+char *SubTitle;
+char *Date;
+char *Institution;
+ListAuthor lauthor;
+ListaParagraph abstract;
+ListaParagraph aknowledgement;
+KeyWords words;
+char *toc;
+char *lof;
+char *lot;
+}*Front, SFront; 
+/CODE
+\BPARA
+Essa estrutura será composto por varias identidades e será responsável pela primeira parte do relatório.  
+/EPARA
+\BLIST \BITEM Titulo do Relatório  /EITEM 
+\BITEM SubTitulo /EITEM
+\BITEM Data /EITEM
+\BITEM Instituição /EITEM
+\BITEM Lista dos diferentes autores /EITEM
+\BITEM Um abstract  /EITEM
+\BITEM Agradecimentos  /EITEM
+\BITEM Lista de KeyWords  /EITEM
+/ELIST
+/ESEC
+\BSEC \TITLE ListChapter /TITLE
+\CODE 
+typedef struct sLChapter{
+    Capitulo capitulo;
+    struct sLChapter *seg;
+}*ListChapter,ChapterNodo;
+/CODE 
+\BPARA
+A struct ListChapter representa uma lista de capítulos que servirá para podermos representar os diferentes capítulos do relatório. 
+/EPARA
+/ESEC
+\BSEC \TITLE Capitulo /TITLE
+\CODE 
+typedef struct SCapitulo{
+    char *title;
+    LChapter capitulo;
+}*Capitulo,Scapitulo;
+/CODE
+\BPARA
+A estrutura Capitulo permitirá a representação do capitulo e será composto por um titulo e uma lista ligada de conteúdo que será apresentada de seguida. 
+/EPARA
+/ESEC
+\BSEC \TITLE LCapitulo ChapterConteudo /TITLE
+\CODE
+typedef struct sChapterConteudo{
+    int tipo;
+    union{
+        ListaConteudo paragraph;
+        Float foat;
+        ItemList list;
+        CodeBlock codeBlock;
+        Section section;
+        LSumary sumary;
+    }ChapConteudo;
+}*ChapterConteudo,ChapterConteudoNodo;
+
+typedef struct SLCapitulo{
+    ChapterConteudo conteudo;
+    struct SLCapitulo *seg;
+}*LChapter,Schapter; 
+/CODE 
+\BPARA
+Essas duas estruturas representam uma lista de conteúdo onde cada nodo da lista poderá ser de diferentes tipos, como era preciso o capitulo aceitar vários tipos decidiu-se criar a estrutura ChapterConteudo com uma union, assim conseguimos resolver esse problema.       
+/EPARA
+/ESEC
+\BPARA 
+
+
+As seguintes estruturas seguem extatamente a mesma arquitetura e não serão apresentada no nosso relatório
+/EPARA
+\BLIST \BITEM ListConteudo  /EITEM 
+\BITEM ItemList  /EITEM
+\BITEM Section /EITEM
+\BITEM SubSection  /EITEM
+\BITEM SubSubSection  /EITEM
+/ELIST/ECHAP /EBODY\BBM\BPARA 
+Este trabalho prático permitiu-nos consolidar os conhecimentos obtidos nas aulas uma vez que precisamos de tudo o que temos vindo a dar, a forma como estruturar o compilador, como funcionava a gramática disponibilizada pelo docente, o que era suposto os analisadores lexico e semantico fazerem, como funcionavam e interagiam. O nível de dificuldade neste trabalho foi um pouco maior que no primeiro, o que era de esperar, e foi facilitado pelo facto de termos já grande parte da gramática, apenas tendo de fazer algumas alterações. A nossa satisfação perante o que foi produzido neste trabalho é positiva, uma vez que ficamos a perceber melhor a estruturação do compilador dividindo o analisador em analisador lexico e sintatico, colocando depois um programa em C a fazer a gestão dos dados e escrever nos ficheiros HTML e LaTeX nas respetivas linguagens. 
+ 
+/EPARA/EBM/REPORT

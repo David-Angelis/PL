@@ -1,0 +1,83 @@
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><head><h1>PL - Processamento de Linguagens </h1></head><br>
+<h2>Report 2007: vamos escrever relatórios </h2><br>
+<h3>14 Maio 2014 </h3><br>
+<h4>Author</h4>David Angelis   60990    
+<br>Lucas Oliveira   60990    
+<br>Rui Mendes   60990    
+<br><h4>Uminho </h4><br><h4>KeyWords:</h4>Yacc ;Flex ;<br><br><h2>Abstract</h2>
+Neste trabalho temos como objetivo criar um analisador léxico e um sintático, que processa e analisa o texto,
+apanhando as palavras reservadas, e de seguida verifica se a estrutura do relatório está bem construida. Enquando analisa o 
+texto vai guardando-o em estruturas de dados, em listas ligadas.E por fim convertendo o nosso relatório em HTML e em LaTex. 
+<h2>Table of Contents</h2><li><p><a href="#Introdução ">1 Introdução <a/></p></li>
+<li><p><a href="#Sintaxe da Nossa Linguagem ">2 Sintaxe da Nossa Linguagem <a/></p></li>
+<li><p><a href="#Estrutura do Trabalho ">3 Estrutura do Trabalho <a/></p></li>
+<li><a href="#Report ">3.1 Report <a/></li>
+<li><a href="#FrontMatter ">3.2 FrontMatter <a/></li>
+<li><a href="#ListChapter ">3.3 ListChapter <a/></li>
+<li><a href="#Capitulo ">3.4 Capitulo <a/></li>
+<li><a href="#LCapitulo ChapterConteudo ">3.5 LCapitulo ChapterConteudo <a/></li>
+<h2>List of Figure</h2><li><a href="#Sintaxe da nossa Linguagem "> Sintaxe da nossa Linguagem <a/></li>
+<h2>List of Table</h2><h2><a name="Introdução ">Introdução </a></h2>Para o segundo Trabalho Prático da Unidade Curricular de Processamento de Linguagens, a nossa escolha foi o enunciado 5 que tem como titulo: Report 2007: vamos escrever relatórios. Neste projeto, pretende-se que seja criado um compilador capaz de 
+converter
+ uma relatório escrito numa linguagem criada por nó. Portanto, neste documento irão estar presentes as nossas decisões, a estruturação do projecto, bem como as explicações e funcionamento do mesmo.
+<h2><a name="Sintaxe da Nossa Linguagem ">Sintaxe da Nossa Linguagem </a></h2>A seguinte figura mostra as diferentes palavras reservadas que o analisador léxico deverá reconhecer e comunica-lá ao analisador sintático.   
+<div style="text-align:center;"><figure><img src="sintaxe.jpg"><figcaption><a name="Sintaxe da nossa Linguagem ">Sintaxe da nossa Linguagem </a></figcaption></figure></div><h2><a name="Estrutura do Trabalho ">Estrutura do Trabalho </a></h2>Este trabalho consiste em dois analisadores, um lexico, feito em flex que irá 
+apanhar
+ as palavras reservadas na nossa linguaguem e passar a informação do que reconheceu para o analisador sintático, feito em yacc, que irá verificar se a gramática obtida do documento que está a ser analisado está correta.
+Depois disto, e no yacc, gravamos os dados em estruturas de dados. Por fim, vamos buscar os dados a essas estruturas e criamos um ficheiro HTML e
+ou LaTeX com a nossa linguagem convertida para essas linguagens.
+<h3><a name="Report ">Report </a></h3><div><p><pre>typedef struct sReport{
+Front front;
+ListChapter listchapter;
+ListaParagraph final;
+}*Report,SReport; </pre></p></div>Essa estrutura permite-nos representar o relatório que será composto por 3 partes, o FrontMatter, o Body e por ultimo o BackMatter.   
+<h3><a name="FrontMatter ">FrontMatter </a></h3><div><p><pre>
+typedef struct sFrontMatter
+{
+    
+char *title;
+char *SubTitle;
+char *Date;
+char *Institution;
+ListAuthor lauthor;
+ListaParagraph abstract;
+ListaParagraph aknowledgement;
+KeyWords words;
+char *toc;
+char *lof;
+char *lot;
+}*Front, SFront; 
+</pre></p></div>Essa estrutura será composto por varias identidades e será responsável pela primeira parte do relatório.  
+<ul><li>Titulo do Relatório  </dt><li>SubTitulo </dt><li>Data </dt><li>Instituição </dt><li>Lista dos diferentes autores </dt><li>Um abstract  </dt><li>Agradecimentos  </dt><li>Lista de KeyWords  </dt></ul><h3><a name="ListChapter ">ListChapter </a></h3><div><p><pre>
+typedef struct sLChapter{
+    Capitulo capitulo;
+    struct sLChapter *seg;
+}*ListChapter,ChapterNodo;
+</pre></p></div>A struct ListChapter representa uma lista de capítulos que servirá para podermos representar os diferentes capítulos do relatório. 
+<h3><a name="Capitulo ">Capitulo </a></h3><div><p><pre>
+typedef struct SCapitulo{
+    char *title;
+    LChapter capitulo;
+}*Capitulo,Scapitulo;
+</pre></p></div>A estrutura Capitulo permitirá a representação do capitulo e será composto por um titulo e uma lista ligada de conteúdo que será apresentada de seguida. 
+<h3><a name="LCapitulo ChapterConteudo ">LCapitulo ChapterConteudo </a></h3><div><p><pre>
+typedef struct sChapterConteudo{
+    int tipo;
+    union{
+        ListaConteudo paragraph;
+        Float foat;
+        ItemList list;
+        CodeBlock codeBlock;
+        Section section;
+        LSumary sumary;
+    }ChapConteudo;
+}*ChapterConteudo,ChapterConteudoNodo;
+
+typedef struct SLCapitulo{
+    ChapterConteudo conteudo;
+    struct SLCapitulo *seg;
+}*LChapter,Schapter; 
+</pre></p></div>Essas duas estruturas representam uma lista de conteúdo onde cada nodo da lista poderá ser de diferentes tipos, como era preciso o capitulo aceitar vários tipos decidiu-se criar a estrutura ChapterConteudo com uma union, assim conseguimos resolver esse problema.       
+As seguintes estruturas seguem extatamente a mesma arquitetura e não serão apresentada no nosso relatório
+<ul><li>SubSubSection  </dt><li>SubSection  </dt><li>Section </dt><li>ItemList  </dt><li>ListConteudo  </dt></ul><h2>Epilogue</h2>Este trabalho prático permitiu-nos consolidar os conhecimentos obtidos nas aulas uma vez que precisamos de tudo o que temos vindo a dar, a forma como estruturar o compilador, como funcionava a gramática disponibilizada pelo docente, o que era suposto os analisadores lexico e semantico fazerem, como funcionavam e interagiam. O nível de dificuldade neste trabalho foi um pouco maior que no primeiro, o que era de esperar, e foi facilitado pelo facto de termos já grande parte da gramática, apenas tendo de fazer algumas alterações. A nossa satisfação perante o que foi produzido neste trabalho é positiva, uma vez que ficamos a perceber melhor a estruturação do compilador dividindo o analisador em analisador lexico e sintatico, colocando depois um programa em C a fazer a gestão dos dados e escrever nos ficheiros HTML e LaTeX nas respetivas linguagens. 
+ 
