@@ -1,0 +1,142 @@
+\documentclass[12pt,a4paper]{report}
+\usepackage[portuguese]{babel}
+\usepackage[utf8]{inputenc} 
+\author{David Angelis 60990 \\Rui Mendes 61046 \\Sérgio Oliveira 61024} 
+ 
+\title{Trabalho Prático 1 \\Processamento de Linguagens }
+\date{\today}
+\begin{document}
+\maketitle
+ \tableofcontents
+\chapter{Introdução}
+No âmbito da disciplina de Processamento de Linguagens foi pedido a realização de uma aplicação em C utilizando \textit{Expressões Regulares} e \textit{geradores de filtros/processadores de texto} como o Flex. No enunciado foi-nos propostos vários trabalhos possiveís onde cada grupo teria de desenvolver só um específico. Uma vez que a Wikipédia é, porventura a fonte de informação mais utilizada actualmente, achamos pertinente e interessante fazer o processamento de algumas entradas/páginas desta fonte de informação, que corresponde ao enunciado 3. 
+  
+\section{Apresentação do caso de estudo}
+Uma vez que existem múltiplas variantes da Wikipédia em XML, foi necessário tomar uma decisão sobre qual dessas variantes usar no nosso projecto. Decidimos então tomar alguns dos "dumps" XML da Wikipédia em português como fonte de texto a processar. Esses ficheiros contêm informação sobre os mais variados temas, pelo que foi necessário escolher um tema em particular para servir como caso de estudo. Deste modo, o grupo escolheu o tema ``países'' para servir como base de filtragem aos documentos. Com isto, pretendemos um índice clicável html, com um conjunto de informações de cada país. 
+\newpage
+\chapter{Caso de Estudo}
+
+\section{Estrutura ficheiro XML da Wikipédia}
+\begin{verbatim}
+\textbf{dsfscvsdfdsf}
+\end{verbatim}
+
+Tirando alguma informação redundante, os ficheiros XML com os quais trabalhamos têm essencialmente a seguinte estrutura nuclear:
+\begin{verbatim}
+<page>
+    <title></title>
+    <text>
+     ...
+     ...
+    {{info/assunto|
+      |informação
+      |...
+      |informação}}
+    ...
+    ...
+   </text>
+</page>
+\end{verbatim}
+Uma vez que apenas nos interessa aceder à informação dos países, toda a informação pretendida encontra-se disponível dentro da infobox e no título de cada página.
+\newpage
+\section{Estrutura típica da infobox}
+\begin{verbatim}
+{{Info/País
+ |nome_nativo                 = Portugal
+ |nome_longo_convencional     = ''República Portuguesa''
+ |imagem_bandeira             = Flag of Portugal.svg
+ |nome_pt                     = Portugal
+ |imagem_brasão               = Coat of arms of Portugal.svg
+ |descrição_bandeira          = Bandeira de Portugal
+ |descrição_brasão            = Selo da República Portuguesa
+ |leg_bandeira                = [[Bandeira de Portugal|Bandeira]]
+ |leg_brasão                  = [[Brasão de armas de Portugal|Brasão de armas]]
+ |lema                        = ''não tem''
+ |hino                        = ''[[A Portuguesa]]'' {{não imprimir|[[Ficheiro:A
+\end{verbatim}
+Para cada país, são filtrados os seguintes campos:
+\begin{itemize}
+\item{Nome}
+\item{Bandeira}
+\item{Capital}
+\item{Líder politico}
+\item{Regime político}
+\item{Moeda} 
+\end{itemize}
+Ao fazer a leitura do ficheiro , são também contabilizadas estatísticas relativas ao número de páginas processadas bem como o total de países encontrados. Contudo, é necessário realçar que nem sempre o que nos é apresentado como um país é, de facto, um país ``real''. Isto é, estão identificadas e representadas na ``infobox/pais'' certas entidades ou lugares que não são necessariamente países (como por exemplo Açores ou Algarve). Ora, este tipo de situação, está fora do nosso controlo e naturalmente que o contexto não é detectado pelo "parser".
+\newpage
+\section{Analizador léxico}
+\subsection{Condições de contexto e Expressões regulares}
+Para tratar mais facilmente os dados de cada país, decidimos criar, para além do contexto ``default'', duas condições de contexto que melhor se adequam ao problema. Em todas as condições, existem um conjunto de regras ``padrão'' \{acção\}.
+\subsection{Default}
+\begin{verbatim}
+<*>\<page\> 
+\end{verbatim}
+Sempre que encontrar-mos a expressão regular acima referida, é executada a macro BEGIN page e entramos dentro do contexto ``page''.
+\begin{verbatim}
+<*>. ;
+\end{verbatim}
+Tudo o que seja diferente da regra 1, é descartado.
+\begin{verbatim}
+<*>\n ;
+\end{verbatim}
+Descarta também todos os ``/n''.
+\subsection{Page}
+
+Como o nome indica, esta condição de contexto ``page'', serve para nos colocarmos dentro do contexto de uma página da wikipédia e apenas serão aplicadas as regras relativas a este contexto.
+\begin{verbatim}
+<page>\<title\>[^<]*
+\end{verbatim}
+É guardado o titulo da página
+\begin{verbatim}
+page>\{\{[iI]nfo\/[pP]aís
+\end{verbatim}
+Se o inicio da infobox for encontrado, daremos entrada no contexto particular da infobox, nomeadamente o contexto ``info''. São também inicializadas algumas strings.
+\begin{verbatim}
+<page>\<\/page\> 
+\end{verbatim}
+Se for encontrado o fim da página e tiver sido encontrada uma infobox de país, será criado o respectivo ficheiro HTML e voltaremos para o contexto por omissão.
+\subsection{Info}
+Uma vez dentro do contexto ``page'' é possível saltar para um outro contexto, chamado info. Este contexto representa a infobox que contém as informações relativas ao país que queremos extrair. Aqui, existem também um conjunto de regras que apenas serão executadas dentro deste respectivo contexto.
+\begin{verbatim}
+<info>\|capital.*=\ [^\n\t\r\|]+
+\end{verbatim}
+Encontra a capital do dado país
+\begin{verbatim}
+<info>\|nome_pt.*=\ [^\n\t\r\|]+
+\end{verbatim}
+Encontra a tradução portuguesa do nome do país
+\begin{verbatim}
+<info>\|imagem_bandeira.*=\ [^\n\t\r\|]+
+\end{verbatim}
+Encontra o nome do ficheiro da bandeira
+\begin{verbatim}
+<info>\|tipo_governo.*=\ [^\n\t\r\|]+ 
+\end{verbatim}
+Encontra a informação sobre o regime político do país 
+\begin{verbatim}
+<info>\|nome_líder1.*=\ [^\n\t\r\|]+
+\end{verbatim}
+Encontra o nome do líder político
+\begin{verbatim}
+<info>\|moeda.*=\ [^\n\t\r\|]+
+\end{verbatim}
+Encontra informação sobre a moeda do país
+
+\section{Considerações} 
+
+\subsection{Bandeira}
+Inicialmente, era pretendido que a imagem da bandeira do país aparecesse na pagina html gerada relativa ao país. Contudo, isso não foi possível de implementar, devido ao facto da wikipédia não ter essa informação ``standardizada''. Ou seja, não era possível, partindo do nome da bandeira, conseguir chegar directamente à imagem disponibilizada na wikipedia. A solução encontrada pelo grupo, foi de em vez de colocar directamente a imagem no ficheiro HTML, foi criada um ligação clicável, através do nome da bandeira, para a página original da wikipédia.
+
+\subsection{Logica nome pais}
+Uma vez que a informação do nome do país está disponível em diferentes partes do texto, foi necessário definir e aplicar um conjunto de regras para a selecção do nome. Assim, são aplicadas as seguintes regras.
+\begin{itemize}
+\item{Se o nome do titulo não contiver ``/'', então será considerado correcto e o escolhido}
+\item{Se o título estiver incorrecto, é seleccionado o titulo ``nome\_pt'' contido na infobox}
+\end{itemize}
+\chapter{Conclusão}
+Este trabalho prático tinha como finalidade principal o desenvolvimento de competências no dominio das expressões regulares e da utilização de ferramentas como o flex. No ponto de vista do grupo, esses objectivos do enunciado foram cumpridos. No entanto, é também importante realçar que ao realizar o trabalho foram sendo desenvolvidas outras competências (in)directamente relacionadas com o mesmo. Ficamos a conhecer a wikipédia um pouco mais "por dentro" e apercebemo-nos, talvez, do potencial enorme de extração de informação que simples programas podem ter utilizando expressões regulares. 
+
+
+
+\end{document}

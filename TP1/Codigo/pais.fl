@@ -1,0 +1,151 @@
+%option noyywrap
+%x page info
+
+%{
+		int util=0;
+   char *title1; 
+  char *title;
+	char *capital;
+	char *lider;
+	char *bandeira;
+  char *cidade;
+  char *moeda;
+  char *moeda_iso;
+  char *populacao;
+  char *governo;
+  char *text;
+  int paginas=0;
+  int pais=0;
+	FILE *fp;
+	FILE *sum;
+
+	char* tiraEspaco(char * text){
+  int i;
+  char *final=strdup(text);
+
+   for (i=0; text[i] != '\0'; i++) 
+    { 
+      if (text[i] == ' ')   /* Se for letra ' ' */ 
+      {                  
+        final[i] ='_';    /* Substitui por outro caracter..*/ 
+      }
+        if(text[i]=='|')
+        {
+        final[i]='\0';
+        }
+    }  
+    return final;
+}
+
+char *verificaTitulo(char* titulo){
+  int i,flag=0;
+  char *final=strdup(titulo);
+   for (i=0; titulo[i] != '\0'&&flag==0; i++) 
+    { 
+      if (titulo[i] == ':')   /* Se for letra ' ' */ 
+      {                  
+        final[i] ='-';    /* Substitui por outro caracter..*/ 
+      }
+      if(titulo[i] == '/')
+      flag++;
+    }  
+    if(flag==0)
+    return final;
+    else return NULL;
+}
+
+void Imprimir(){
+  char ficheiro[1000];
+  char * aux=verificaTitulo(title1);
+  if(aux){
+   strcpy(ficheiro,aux);
+   }else{ 
+   strcpy(ficheiro,verificaTitulo(title));
+   }
+  char *nome=strdup(ficheiro);
+  int j;
+  fp=fopen(strcat(ficheiro,".html"),"w");
+  sum=fopen("index.html","a");
+  fprintf(sum,"<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />");
+  fprintf(sum,"<a href=\'%s\'>%s</a><br>",ficheiro,nome);
+  fclose(sum);
+   fprintf(fp,"<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />");
+   fprintf(fp,"<head><h1>%s</h1></head><br>\n",nome);
+   fprintf(fp,"<a href=http://en.wikipedia.org/wiki/File:%s>Bandeira: %s</a><br>",
+                                                      tiraEspaco(bandeira+1),bandeira);
+
+                                                  
+   if((capital)&&(capital[0]=='[')){
+      fprintf(fp,"<h2>Capital: %s</h2><br>\n",capital+2);
+   }else{
+      fprintf(fp,"<h2>Capital: %s</h2><br>\n",capital);
+   }
+
+                                                
+  if(lider[0]=='['){
+    fprintf(fp,"<h3>Lider: %s</h3><br>\n",lider+2);
+   }else{
+    fprintf(fp,"<h3>Lider: %s</h3><br>\n",lider);
+   }
+
+
+                                               
+    if(governo[0]=='['){
+        fprintf(fp,"<h3>Regime Político: %s</h3><br>\n",governo+2);
+      }else{
+        fprintf(fp,"<h3>Regime Político: %s</h3><br>\n",governo);
+      }
+
+    if((moeda)&&(strcmp(moeda,"")!=0)){
+      if(moeda[0]=='['){
+        fprintf(fp,"<h4>Moeda: %s</h4><br>\n",moeda+2);
+        }else{
+          fprintf(fp,"<h4>Moeda: %s</h4><br>\n",moeda);
+        }
+    }
+
+   fclose(fp);
+
+}	
+
+
+%}
+%%
+	 
+
+<*>\<page\> {BEGIN page;paginas++; util=0;}
+<*>. ;
+<*>\n ;
+<page>\{\{[iI]nfo\/[pP]aís {util=1;BEGIN info;capital=strdup("");title=strdup("")                                                ;bandeira=strdup("");governo=strdup("");
+                                                lider=strdup("");moeda=strdup("");}
+<page>\<title\>[^<]* {title1=strdup(yytext+7);}
+<page>\<\/page\> {if(util==1)Imprimir();BEGIN 0;}
+
+<info>\|capital.*=\ [^\n\t\r\|]+ {{strtok(yytext,"=");capital=strdup(strtok(NULL,"]&\n{}")+1);}}   
+<info>\|nome_pt.*=\ [^\n\t\r\|]+ {{strtok(yytext,"=");title=strdup(strtok(NULL,"]&\n{}/,")+1);}} 
+<info>\|imagem_bandeira.*=\ [^\n\t\r\|]+ {strtok(yytext,"=");bandeira=strdup(strtok(NULL,"\n"));}
+<info>\|tipo_governo.*=\ [^\n\t\r\|]+ {strtok(yytext,"=");governo=strdup(strtok(NULL,"]&|")+1);}
+<info>\|nome_líder1.*=\ [^\n\t\r\|]+ {strtok(yytext,"=");lider=strdup(strtok(NULL,"]&")+1);}
+<info>\|moeda.*=\ [^\n\t\r\|]+ {pais++;strtok(yytext,"=");moeda=strdup(strtok(NULL,"]&")+1);BEGIN   
+                 page;}                                                                                    
+  
+
+
+%%
+int main (int argc, char * argv[]) {
+  sum=fopen("index.html","w");
+  fprintf(sum,"<head><h1>Lista dos Países</h1></head><br>\n");
+  fclose(sum);
+if ( argc > 1 )
+           yyin = fopen( argv[1], "r" );
+else printf("Erro: Ficheiro não encontrado\n");
+  yylex();
+  sum=fopen("index.html","a");
+  fprintf(sum,"<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />");
+  fprintf(sum,"<h2>Estatísticas do ficheiro %s</h2><br>\n",argv[1]);
+  fprintf(sum,"Número de paginas processadas: %d<br>\n",paginas);
+  fprintf(sum,"<p>Número de países: %d</p><br>\n",pais);
+  fclose(sum);
+  return 0;
+}
+
